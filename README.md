@@ -1,1 +1,1 @@
-# Creating ER20 and ER721 tokens
+# Creating ERC20 and ERC721 tokens
