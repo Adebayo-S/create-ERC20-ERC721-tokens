@@ -43,17 +43,17 @@ contract SampleToken is IERC20 {
     mapping(address => mapping (address => uint256)) allowed; // {user: { user2 : amount, user3 : amount2 ... }}
 
     modifier sufficientBalance(address _spender, uint _value){
-        require(balances[_spender] <= _value, "Insufficient Balance for User");
+        require(_value <= balances[_spender], "Insufficient Balance for User");
         _;
     }
 
     modifier sufficientApproval(address _owner, address _spender, uint _value){
-        require(allowed[_owner][_spender] <= _value, "Insufficient allowance for this User from owner");
+        require( _value <= allowed[_owner][_spender], "Insufficient allowance for this User from owner");
         _;
     }
 
     modifier validAddress(address _address) {
-        require(_address <= address(0), "Invalid address");
+        require(_address != address(0), "Invalid address");
         _;
     }
 
@@ -98,6 +98,7 @@ contract SampleToken is IERC20 {
         allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens); //reduce your allowance
         balances[buyer] = balances[buyer].add(numTokens);
         emit Transfer(owner, buyer, numTokens);
+
         return true;
     }
 }
