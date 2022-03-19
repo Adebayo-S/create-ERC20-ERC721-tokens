@@ -36,12 +36,21 @@ contract SampleToken is IERC20 {
 
     uint256 public totalSupply_;
     uint256 public decimals;
-
     string public name;
     string public symbol;
 
     mapping(address => uint256) balances;
     mapping(address => mapping (address => uint256)) allowed; // {user: { user2 : amount, user3 : amount2 ... }}
+
+    modifier sufficientBalance(address _spender, uint _value){
+        require(balances[_spender] <= _value, "Insufficient Balance for User");
+        _;
+    }
+
+    modifier validAddress(address _address) {
+        require(_address <= address(0), "Invalid address");
+        _;
+    }
 
     constructor(uint256 _totalSupply, uint _decimals, string memory _name, string memory _symbol){
         totalSupply_ = _totalSupply;
@@ -60,17 +69,18 @@ contract SampleToken is IERC20 {
         return balances[_tokenOwner];
     }
 
-    function transfer(address receiver, uint256 numTokens) public override returns (bool) {
-        require(numTokens <= balances[msg.sender]);
+    function transfer(address receiver, uint256 numTokens) public override sufficientBalance(msg.sender, numTokens) validAddress(receiver) returns (bool) {
         balances[msg.sender] = balances[msg.sender].sub(numTokens);
         balances[receiver] = balances[receiver].add(numTokens);
         emit Transfer(msg.sender, receiver, numTokens);
+
         return true;
     }
 
-    function approve(address delegate, uint256 numTokens) public override returns (bool) {
+    function approve(address delegate, uint256 numTokens) public override validAddress(delegate) returns (bool) {
         allowed[msg.sender][delegate] = numTokens;
         emit Approval(msg.sender, delegate, numTokens);
+
         return true;
     }
 
