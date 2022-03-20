@@ -31,7 +31,7 @@ interface IERC20 {
 }
 
 
-contract SampleToken is IERC20 {
+contract ZuriERC20 is IERC20 {
     using SafeMath for uint256;
 
     uint256 public totalSupply_;
